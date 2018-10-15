@@ -1,0 +1,190 @@
+#Test with: http://editor.swagger.io/
+
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Microservice for Statistcs
+  description: Golang + Mongo data base
+  license:
+    name: Software Architecture 2018-II
+host: 192.168.99.101:8800
+basePath: /
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /statistics:
+    post:
+      summary: Creates a new statistic
+      operationId: Post
+      parameters:
+        - name: statistic
+          in: body
+          required: true
+          description: Statistic Object
+          schema:
+            $ref: '#/definitions/StatisticInput'
+      responses:
+        '200':
+          description: ok
+          schema:
+            $ref: '#/definitions/StatisticList'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+    get:
+      summary: Returns all statistics
+      operationId: Get
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/StatisticList'
+        '406':
+          description: Not Acceptable (Invalid Params)
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+  /statistics/{id_restaurant}:
+    get:
+      summary: Returns a course with the given code of the restaurant
+      operationId: GetBy
+      parameters:
+        - name: id_restaurant
+          in: path
+          description: The code of the restaurant to get the list of statistics
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/StatisticList'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '406':
+            description: Not Acceptable (Invalid Params)
+            schema:
+              $ref: '#/definitions/ErrorModel'
+        '500':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+    
+  /statistics/{id_statistic}:
+    delete:
+      summary: Deletes a statistic with the given code of the statistic
+      operationId: Delete
+      parameters:
+        - name: id_statistic
+          in: path
+          description: The code of the statistic to be deleted
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/ErrorModel' 
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '406':
+            description: Not Acceptable (Invalid Params)
+            schema:
+              $ref: '#/definitions/ErrorModel'
+        '500':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+definitions:
+
+  # Statistic
+  Statistic:
+    type: object
+    properties:
+      _id:
+        type: string
+      id_restaurant:
+        type: string
+      date:
+        type: string
+      sold_lunches: 
+        type: integer
+      canceled_shifts:
+        type: integer
+      av_time:
+        type: number
+        format: double
+      av_punctuation:
+        type: number
+        format: double
+      bonus_sold:
+        type: integer
+      student_sold:
+        type: integer
+      external_sold:
+        type: integer
+
+
+  StatisticInput: 
+    type: object
+    properties:
+      id_restaurant:
+        type: string
+      date:
+        type: string
+      sold_lunches: 
+        type: integer
+      canceled_shifts:
+        type: integer
+      av_time:
+        type: number
+        format: double
+      av_punctuation:
+        type: number
+        format: double
+      bonus_sold:
+        type: integer
+      student_sold:
+        type: integer
+      external_sold:
+        type: integer
+
+  StatisticList:
+    type: object
+    required:
+      - t
+      - err
+    properties:
+      t:
+        type: array
+        items:
+          $ref: '#/definitions/Statistic'
+      err:
+        type: string
+
+# Errors
+  ErrorModel:
+    type: object
+    required:
+      - err
+    properties:
+      err:
+        type: string
