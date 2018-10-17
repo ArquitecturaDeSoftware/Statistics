@@ -3,7 +3,6 @@ services:
   statistic:
     build:
       context: .
-      dockerfile: statistic/Dockerfile
     volumes:
     - .:/go/src/github.com/jscastelblancoh/statistic_service/examples
     container_name: statistic
